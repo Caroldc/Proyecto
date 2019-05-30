@@ -1,0 +1,22 @@
+<!--Para darle una funcionalidad al boton, en este caso hacer click, debemos poner la accion (click) seguido
+de lo que haremos, en este caso cambiar el valor de la variable habilitar (click)="habilitar=false"-->
+<!--Otra opción, que es la que dejaremos en este caso, es preguntar el valor de la variable y dependiendo de este
+le asignamos un valor u otro (click)="habilitar=(habilitar==true)? false:true" funcionando los : puntos como un sino-->
+<button type="button" (click)="habilitar= (habilitar==true)? false:true" class="btn btn-primary my-3">
+  {{habilitar==true? 'Ocultar':'Mostrar'}}</button>
+
+<div class="card">
+  <div class="card-header">
+    Listado de cursos
+  </div>
+  <!--Utilizamos la directiva *ngIf  para poder mostrar o no el contenido de los cursos a través de la condición que
+    le demos en nuestro caso que la variable habilitar sea true(
+    podemos dejar solo habilitar porque al ser un tipo boolean, por defecto
+  si no igualamos con nada, quiere decir true)-->
+  <ul class="list-group" *ngIf='habilitar == true'>
+    <!--Utilizamos la directiva *ngFor en el item que queremos que se vaya a repetir,
+    con let definimos la variable (curso)donde se almacenara el nombre de cada uno
+    de los cursos que componen el array-->
+    <li class="list-group-item"  *ngFor="let curso of listaCurso">{{curso}}</li>
+  </ul>
+</div>

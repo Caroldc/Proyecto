@@ -1,0 +1,53 @@
+<!--Link que genera la factura en pdf -->
+
+<a href="javascript: pruebaDivAPdf()" class="btn btn-primary my-3">Imprimir Factura</a>
+<div id="imprimir">
+<div class="card bg-light" *ngIf="factura">
+  <div class="card-header">{{titulo}}: {{factura.descripcion}}</div>
+    <div class="card-body">
+      <h4 class="card-title">
+        <a [routerLink]="['/clientes']" class="btn btn-light btn-xs">&laquo;volver</a>
+      </h4>
+      <ul class="list-group my-2">
+        <li class="list-group-item list-group-item-primary">Datos del cliente</li>
+        <li class="list-group-item">{{factura.cliente.nombre}}</li>
+        <li class="list-group-item">{{factura.cliente.apellido}}</li>
+      </ul>
+      <ul class="list-group my-2">
+          <li class="list-group-item list-group-item-primary">Datos de la factura</li>
+          <li class="list-group-item">Folio: {{factura.id}}</li>
+          <li class="list-group-item">Descripcion: {{factura.descripcion}}</li>          
+          <li class="list-group-item">Descripcion: {{factura.createAt}}</li>
+      </ul>       
+      <table class="table table-striped table-hover table-bordered my-3">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Importe</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let linea of factura.lineas">
+            <td>{{linea.producto.nombre}}</td>
+            <td>{{linea.producto.precio}}</td>
+            <td>{{linea.cantidad}}</td>
+            <td>{{linea.importe}}</td>
+          </tr>
+        </tbody>
+      </table>
+     <h5 class="float-right mr-2"><span>Total EUR:  {{factura.total}} </span></h5> <!-- <span class="badge badge-secondary">{{factura.total}}</span>-->
+
+     <div class="card border-info mb-4" style="max-width: 300px;">
+      <div class="card card-header">Observaciones: 
+      <div class="card card-body">
+        <p *ngIf="!factura.observacion">No tiene observaciones</p>
+        <p *ngIf="factura.observacion">{{factura.observacion}}</p>
+      </div>
+    </div>
+
+     </div>
+    </div>
+</div>
+</div>

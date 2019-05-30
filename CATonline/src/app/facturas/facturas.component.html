@@ -1,0 +1,97 @@
+<div class="card bg-light">
+  <div class="card-header">{{titulo}}: {{factura.descripcion}}</div>
+  <div class="card-body">
+    <h4 class="card-title">
+      <a [routerLink]="['/clientes']" class="btn btn-light btn-xs">&laquo;volver</a>
+    </h4>
+
+    <form #facturaForm="ngForm">
+      <!--nos lo muestra cuando lo carga, en el subscribe-->
+      <div class="form-group row" *ngIf="factura.cliente">
+        <label for="cliente" class="col-sm-2 col-form-label">Cliente</label>
+        <div class="col-sm-6">
+          <!--Con ngModel mantenemos el modelo y la vista sincronizadas (two-way binding)-->
+          <input type="text" name="cliente" value="{{factura.cliente.nombre}} {{factura.cliente.apellido}} " class="form-control"
+            disabled />
+        </div>
+      </div> 
+
+      <div class="form-group row">
+        <label for="descripcion" class="col-sm-2 col-form-label">Descripcion</label>
+        <div class="col-sm-6">
+          <!--Con ngModel mantenemos el modelo y la vista sincronizadas (two-way binding)-->
+          <input type="text" name="descripcion" [(ngModel)]="factura.descripcion" class="form-control" required #descripcion="ngModel"/>
+          <div class="alert alert-danger" *ngIf="descripcion.invalid && descripcion.touched"> 
+            La descripcion es obligatoria
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="observacion" class="col-sm-2 col-form-label">Observaciones</label>
+        <div class="col-sm-6">
+          <textarea name="observacion" [(ngModel)]="factura.observacion" class="form-control"></textarea>
+        </div>
+      </div>
+
+
+
+      <div class="form-group row">         
+          <div class="col-sm-6">
+            <mat-form-field class="example-full-width">
+              <input type="text"  placeholder="Añadir producto" aria-label="Productos" matInput [formControl]="myControl"
+                [matAutocomplete]="auto" />
+                <!--$event contiene el producto seleccionado-->
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="mostrarNombre"
+               (optionSelected)="seleccionarProducto($event)">
+                <!--Necesitamos async, porque estamos iterando con un observable-->
+                <mat-option *ngFor="let producto of productosFiltrados | async" [value]="producto">
+                  {{producto.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+        </div>
+        <div *ngIf="factura.lineas.length == 0"class="alert alert-info my-4">
+          No hay líneas asignadas para la factura
+        </div>
+        
+        
+        <!--en esta tabla añadiremos los productos que formaran la factura-->
+        <table class="table table-striped table-hover table-sm" *ngIf="factura.lineas.length > 0">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Total</th>
+              <th>Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let linea of factura.lineas">
+              <td>{{linea.producto.nombre}}</td>
+              <td>{{linea.producto.precio}}</td>
+              <td><input type="number" value="{{linea.cantidad}}" class="form-control col-sm-4" (change)="actualizarCantidad(linea.producto.id, $event)"></td>
+              <td>{{linea.calcularImporte()}}</td>
+              <td><button class="btn btn-danger btn-sm" type="button" (click)="eliminarLinea(linea.producto.id)">X</button></td>
+            </tr>
+            
+          </tbody>
+        </table>
+        <h5 class="float-right" *ngIf="factura.lineas.length > 0">Total de la factura: <span class="badge badge-secondary">{{factura.calcularTotal()}}</span></h5>
+
+
+
+
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <input (click)="create()" type="submit" value="Crear Factura" class="btn btn-success" [disabled]="facturaForm.form.invalid || factura.lineas.length ==0"/>
+        </div>
+      </div>
+
+    </form>
+
+
+  </div>
+</div>

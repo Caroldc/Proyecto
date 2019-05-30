@@ -1,0 +1,41 @@
+<nav aria-label="Page navigation example">
+<ul *ngIf="paginas && paginas.length > 0" class="pagination" style="overflow:scroll">
+
+    <li class="page-item" *ngIf="paginador.number > 0">
+        <a class="page-link" [routerLink]="['/clientes/page', 0]" >
+          Primera
+        </a>
+    </li>
+
+    <li class="page-item" *ngIf="paginador.number > 0">
+        <a class="page-link" [routerLink]="['/clientes/page', paginador.number-1]" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+
+  <!--  El ngFor tiene que iterar sobre un tipo Iterable un tipo array-->  
+  <li class="page-item" *ngFor="let pagina of paginas" [ngClass]="pagina-1 == paginador.number? 'disabled':''">
+   <!--La directiva ngClass nos permite validar una expresion y si es correcta aplicar un estilo, en nuestro caso disabled-->
+    <!--restamos uno porque en el backend la paginacion empieza en 0
+  y en el front en 1, entonces debemos restar 1 para que sean el mismo valor-->
+    <span class="page-link" *ngIf="pagina-1 == paginador.number">{{pagina}}</span>
+    <a *ngIf="pagina-1!= paginador.number" class="page-link"  [routerLink]="['/clientes/page', pagina-1]">{{pagina}}</a>
+  </li>
+
+  <li class="page-item" *ngIf="paginador.totalPages-1 > paginador.number  ">
+      <a class="page-link" [routerLink]="['/clientes/page', paginador.number+1]" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+
+    <li [ngClass]="paginador.last? 'disabled page-item':'page-item'">
+  
+        <a class="page-link" [routerLink]="['/clientes/page', paginador.totalPages-1]" >
+          Última
+        </a>
+    </li>
+</ul>
+</nav>
+

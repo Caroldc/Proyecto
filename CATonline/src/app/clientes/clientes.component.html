@@ -1,0 +1,58 @@
+<detalle-cliente *ngIf="clienteSeleccionado" [cliente]="clienteSeleccionado"></detalle-cliente>
+<div class="card border-success mb-3">
+  <div class="card-header">Clientes</div>
+  <div class="card-body text-success">
+    <h5 class="card-title">Listado de clientes </h5>
+    <div class="my-2 text-left">
+      <!--routerLink es una direcctiva, es un view helper que nos permite crear
+      links hacia nuestras rutas internas del proyecto. Rutas que hemos mapeado a componentes-->
+      <button *ngIf="authService.hasRole('ROLE_USER')" class="btn btn-rounded btn-primary" type="button" [routerLink]="['/clientes/form']">Crear Cliente</button>
+    </div>
+    <div *ngIf="clientes?.length == 0" class="alert alert-info">
+      No hay registros en la base de datos
+    </div>
+    <table class="table table-bordered table-striped" *ngIf="clientes?.length>0">
+      <thead>
+        <tr>
+          <th *ngIf="authService.hasRole('ROLE_USER')">Perfil </th> <!-- <th *ngIf="authService.role('ROLE_ADMIN')">Perfil </th>-->
+          <th>Nombre: </th>
+          <th>Apellido:</th>
+          <th>Fecha de alta: </th>
+          <th>email: </th>
+          <th *ngIf="authService.hasRole('ROLE_USER')">Crear factura: </th>
+         <th *ngIf="authService.hasRole('ROLE_USER')">editar</th>
+        <th *ngIf="authService.hasRole('ROLE_ADMIN')">eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- En este caso lo que se va a repetir son las filas de la tablas, asi que usamos el ngFor
+          en el tr-->
+        <tr *ngFor="let cliente of clientes">
+          <!--*ngIf="authService.role('ROLE_ADMIN')"-->
+          <td *ngIf="authService.hasRole('ROLE_USER')"><img (click)="abrirModal(cliente)" *ngIf="cliente?.foto"           
+            src="http://localhost:8080/api/uploads/img/{{cliente.foto}}" alt="{{cliente.foto}}" class="img-thumbnail rounded"
+            style="width: 64px; height:64px; cursor: pointer;">
+
+            <img (click)="abrirModal(cliente)" *ngIf="!cliente?.foto"
+            src="http://localhost:8080/images/no-usuario.png" alt="Sin foto" class="img-thumbnail rounded"
+            style="width: 64px; height:64px; cursor: pointer;">
+          </td>
+          <td>{{cliente.nombre}} </td>
+          <td>{{cliente.apellido}} </td>
+          <td>{{cliente.createAt}} </td>
+          <td>{{cliente.email}} </td>
+          <td *ngIf="authService.hasRole('ROLE_USER')"><button type="button" class="btn btn-success btn-sm" [routerLink]="['/facturas/form',cliente.id]">crear</button></td>
+          <td *ngIf="authService.hasRole('ROLE_USER')"> <!-- *ngIf="authService.role('ROLE_ADMIN')"  -->
+            <button type="button" name="editar" [routerLink]="['/clientes/form',cliente.id]" class="btn btn-primary btn-sm">editar</button>
+          </td>
+          
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+            <button type="button" name="eliminar" (click)='delete(cliente)' class="btn btn-danger btn-sm">eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!--Componente padre, inyeccion de dependencias entre padre e hijos -->
+    <paginator-nav *ngIf="paginador" [paginador]="paginador"> </paginator-nav>
+  </div>
+</div>
